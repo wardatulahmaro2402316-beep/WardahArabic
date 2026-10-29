@@ -1,54 +1,62 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Default-deny safety net
+    // 1. Aturan keamanan dasar (Default Deny)
     match /{document=**} {
       allow read, write: if false;
     }
 
+    // Helper: Pastikan pengguna sudah login
     function isSignedIn() {
       return request.auth != null;
     }
 
-    function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
-    }
-
-    function isAdmin() {
-      return isSignedIn() && (
-        request.auth.token.email == 'wardatulahmaro97@gmail.com' ||
-        request.auth.token.email == 'wardatul.ahmaro.2402316@students.um.ac.id' ||
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-      );
-    }
-
+    // Helper: Validasi kepemilikan data pengguna (hanya bisa baca/tulis datanya sendiri)
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // User profiles
-    match /users/{userId} {
-      allow get: if isOwner(userId) || isAdmin();
-      allow list: if isAdmin();
-      allow create: if isOwner(userId) && request.resource.data.uid == userId;
-      allow update: if (isOwner(userId) || isAdmin()) && request.resource.data.uid == userId;
-      allow delete: if isAdmin();
+    // Helper: Akun Admin / Guru Pengampu
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'wardatulahmaro97@gmail.com' ||
+        request.auth.token.email == 'wardatul.ahmaro.2402316@students.um.ac.id'
+      );
     }
 
-    // Reading texts for MA Kelas 10
+    // 2. Data Profil Pengguna (/users/{userId})
+    // Hanya user pemilik akun yang bisa membaca dan menulis datanya sendiri
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+
+      // Sub-koleksi pengguna (catatan pribadi, progres belajar, kosakata tersimpan)
+      match /{allChildren=**} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // 3. Data Khusus Pengguna (/user_data/{userId}/{document=**})
+    match /user_data/{userId}/{document=**} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // 4. Hasil Latihan / Kuis Siswa (/quiz_submissions/{submissionId})
+    // Siswa hanya bisa membaca dan mengirim nilai miliknya sendiri
+    match /quiz_submissions/{submissionId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isSignedIn() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+    }
+
+    // 5. Materi Teks Qira'ah MA Kelas 10 (/reading_texts/{textId})
+    // Semua siswa terautentikasi dapat membaca modul, hanya admin yang dapat mengubah
     match /reading_texts/{textId} {
       allow read: if isSignedIn();
-      allow create, update, delete: if isAdmin();
+      allow write: if isAdmin();
     }
 
-    // Quiz submissions
-    match /quiz_submissions/{submissionId} {
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if isAdmin();
-    }
-
-    // Test connection doc for diagnostic ping
+    // 6. Tes Koneksi SDK
     match /test/{docId} {
       allow read, write: if isSignedIn();
     }

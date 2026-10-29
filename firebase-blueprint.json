@@ -27,7 +27,6 @@
         "contentArabic": { "type": "string", "maxLength": 10000 },
         "contentTranslation": { "type": "string", "maxLength": 10000 },
         "level": { "type": "string", "maxLength": 32 },
-        "audioUrl": { "type": "string", "maxLength": 500 },
         "authorId": { "type": "string", "maxLength": 128 },
         "createdAt": { "type": "string" }
       },
@@ -44,8 +43,6 @@
         "userName": { "type": "string", "maxLength": 128 },
         "textId": { "type": "string", "maxLength": 128 },
         "score": { "type": "number" },
-        "totalQuestions": { "type": "number" },
-        "correctCount": { "type": "number" },
         "submittedAt": { "type": "string" }
       },
       "required": ["userId", "textId", "score"]
@@ -54,15 +51,19 @@
   "firestore": {
     "/users/{userId}": {
       "schema": { "$ref": "#/entities/UserProfile" },
-      "description": "Koleksi data profil pengguna"
+      "description": "Koleksi data profil pengguna yang hanya dapat dibaca/ditulis oleh pemilik akun"
+    },
+    "/user_data/{userId}/{documentId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Koleksi data privat spesifik per user"
+    },
+    "/quiz_submissions/{submissionId}": {
+      "schema": { "$ref": "#/entities/QuizSubmission" },
+      "description": "Hasil kuis siswa yang hanya dapat dibaca oleh siswa bersangkutan dan guru pengampu"
     },
     "/reading_texts/{textId}": {
       "schema": { "$ref": "#/entities/ReadingText" },
       "description": "Koleksi materi bacaan qira'ah MA Kelas 10"
-    },
-    "/quiz_submissions/{submissionId}": {
-      "schema": { "$ref": "#/entities/QuizSubmission" },
-      "description": "Koleksi hasil latihan pemahaman siswa"
     }
   }
 }

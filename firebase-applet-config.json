@@ -1,12 +1,8 @@
 {
-  "projectId": "gen-lang-client-0217951135",
-  "appId": "1:47734660124:web:417de67ed5785ec9a393d9",
-  "apiKey": "AIzaSyDSbHFXt8ttc0w7ESzA9k5ncDOr6f8xH1w",
-  "authDomain": "gen-lang-client-0217951135.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-alqiraahmakelas1-cfaed5cf-e6fe-4b04-9509-e39fea2dd8cd",
-  "storageBucket": "gen-lang-client-0217951135.firebasestorage.app",
-  "messagingSenderId": "47734660124",
-  "measurementId": "",
-  "oAuthClientId": "47734660124-6fmffvjotjv73574jp0ref02gqs5uk3v.apps.googleusercontent.com",
-  "recaptchaSiteKey": ""
+  "projectId": "wardaharabic",
+  "appId": "1:737425822524:web:355adbf55c56d348dc8439",
+  "apiKey": "AIzaSyDQbRoyMSJuJvvFFljFqmje1x7i2mJeppg",
+  "authDomain": "wardaharabic.firebaseapp.com",
+  "storageBucket": "wardaharabic.firebasestorage.app",
+  "messagingSenderId": "737425822524"
 }
