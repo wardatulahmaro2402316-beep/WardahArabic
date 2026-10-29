@@ -1,0 +1,6 @@
+{
+  "name": "Al-Qira'ah MA Kelas 10",
+  "description": "Aplikasi pembelajaran bahasa Arab interaktif fokus Maharah Qira'ah untuk MA Kelas 10 dilengkapi latihan pemahaman, mufradat, dan tutor AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
